@@ -1,6 +1,7 @@
 from typing import Optional, Dict, Any
 import httpx
 from config import Settings
+from .models import DetailedActivity, StravaUpdatableActivity, StravaAPIError
 
 
 class StravaAPIClient:
@@ -42,8 +43,41 @@ class StravaAPIClient:
 		response = httpx.get(url, headers={"Authorization": f"Bearer {self.access_token}"})
 		return response.json()
 
-	def get_activity(self, activity_id: str):
+	def get_activity(self, activity_id: str) -> DetailedActivity:
+		"""Get a detailed activity by ID."""
 		self.check_access_token()
 		url = f"{self.base_url}/activities/{activity_id}"
 		response = httpx.get(url, headers={"Authorization": f"Bearer {self.access_token}"})
-		return response.json()
+		
+		if response.status_code != 200:
+			raise StravaAPIError(
+				f"Failed to get activity {activity_id}: {response.text}",
+				status_code=response.status_code,
+				response_data=response.json() if response.text else None
+			)
+		
+		return DetailedActivity(**response.json())
+
+	def update_activity(self, activity_id: str, activity: StravaUpdatableActivity) -> DetailedActivity:
+		"""Update an activity with the provided data."""
+		self.check_access_token()
+		url = f"{self.base_url}/activities/{activity_id}"
+		
+		# Convert Pydantic model to dict, excluding None values
+		activity_data = activity.model_dump(exclude_none=True)
+		
+		response = httpx.put(url, headers={"Authorization": f"Bearer {self.access_token}"}, json=activity_data)
+		
+		if response.status_code != 200:
+			raise StravaAPIError(
+				f"Failed to update activity {activity_id}: {response.text}",
+				status_code=response.status_code,
+				response_data=response.json() if response.text else None
+			)
+		
+		return DetailedActivity(**response.json())
+
+	def hide_activity(self, activity_id: str) -> DetailedActivity:
+		"""Hide an activity from the home feed."""
+		activity_update = StravaUpdatableActivity(hide_from_home=True)
+		return self.update_activity(activity_id, activity_update)
