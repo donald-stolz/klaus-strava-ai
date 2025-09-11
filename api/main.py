@@ -2,9 +2,11 @@ from fastapi import FastAPI
 from strava import StravaAPIClient, StravaUpdatableActivity
 from config import Settings
 from gemini import GeminiAPIClient
+from mangum import Mangum
 
-settings = Settings()
 app = FastAPI()
+handler = Mangum(app)
+settings = Settings()
 strava_client = StravaAPIClient(settings)
 gemini_client = GeminiAPIClient(settings)
 

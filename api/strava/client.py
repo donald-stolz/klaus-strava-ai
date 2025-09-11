@@ -11,6 +11,7 @@ class StravaAPIClient:
 		self.base_url = settings.strava_base_url
 		self.access_token: Optional[str] = None
 
+	# https://developers.strava.com/docs/authentication/#detailsaboutrequestingaccess
 	def refresh_access_token(self):
 		url = f"{self.base_url}/oauth/token"
 		data = {
