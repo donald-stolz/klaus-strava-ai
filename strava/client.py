@@ -1,13 +1,10 @@
 from typing import Optional, Dict, Any
 import httpx
-from config import Settings
-from .models import DetailedActivity, StravaUpdatableActivity, StravaAPIError
+from .models import DetailedActivity, StravaUpdatableActivity, StravaAPIError, StravaConfig
 
 
 class StravaAPIClient:
-	def __init__(self):
-		settings = Settings()
-		print(settings)
+	def __init__(self, settings: StravaConfig):
 		self.client_id = settings.strava_client_id
 		self.client_secret = settings.strava_client_secret
 		self.refresh_token = settings.strava_refresh_token

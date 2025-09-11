@@ -1,10 +1,7 @@
 from typing import Optional, Dict, Any, List
-from dataclasses import dataclass
 from datetime import datetime
 from pydantic import BaseModel, Field
 
-
-@dataclass
 class StravaConfig:
     """Configuration for Strava API integration."""
     client_id: str
