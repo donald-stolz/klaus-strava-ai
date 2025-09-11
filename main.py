@@ -1,10 +1,12 @@
 from fastapi import FastAPI
 from strava import StravaAPIClient, StravaUpdatableActivity
 from config import Settings
+from gemini import GeminiAPIClient
 
 settings = Settings()
 app = FastAPI()
 strava_client = StravaAPIClient(settings)
+gemini_client = GeminiAPIClient(settings)
 
 @app.get("/")
 def read_root():
@@ -29,3 +31,10 @@ def update_activity(activity_id: str, activity: StravaUpdatableActivity):
 @app.put("/strava/activity/{activity_id}/hide")
 def hide_activity(activity_id: str):
     return strava_client.hide_activity(activity_id)
+
+@app.put("/gemini/post/{activity_id}")
+def generate_post(activity_id: str):
+    activity = strava_client.get_activity(activity_id)
+    post = gemini_client.generate_post(activity)
+    strava_client.update_activity(activity_id, post)
+    return post

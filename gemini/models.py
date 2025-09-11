@@ -1,4 +1,9 @@
+from pydantic import BaseModel
+
 class GeminiSettings:
-    """Configuration for Gemini API integration."""
     gemini_api_key: str
-    model_name: str = "gemini-2.5-flash"
+    gemini_model_name: str = "gemini-2.5-flash"
+    
+class GeminiPost(BaseModel):
+    name: str
+    description: str
