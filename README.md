@@ -12,3 +12,5 @@ A fun AI impersonation of my dog connected to Strava
   - [x] LLM in Google AI Studio
   - [ ] Save chat history or give other activity context
   - [x] Response schema; Title, description
+
+`fastapi dev api/main.py`
