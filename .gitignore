@@ -210,6 +210,7 @@ __marimo__/
 terraform/.terraform/
 terraform/terraform.tfstate
 terraform/terraform.tfstate.backup
+terraform/prod.tfvars
 
 # Deployment
 function.zip
