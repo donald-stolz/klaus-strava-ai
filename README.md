@@ -1,6 +1,6 @@
 # klaus-strava-ai
 
-A fun AI impersonation of my dog connected to Strava
+A fun AI impersonation of my dog connected to Strava. Uses [FastAPI](https://fastapi.tiangolo.com/) and [Google Gemini](https://ai.google.dev/gemini-api/docs)
 
 ### TODO
 
