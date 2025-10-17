@@ -1,5 +1,5 @@
 SHELL := /bin/bash
-.SILENT: deploy
+.SILENT: bundle deploy
 
 bundle:
 	echo "Downloading dependencies..."
@@ -8,10 +8,13 @@ bundle:
 	(cd dep && zip -rq ../function.zip .)
 	rm -rf dep
 	echo "Bundling API files..."
-	(cd api && zip -ruq ../function.zip .)
+	(cd api && zip -ruq ../function.zip . || [ $$? -eq 12 ])
 	echo "function.zip created"
 
-deploy:
+deploy: bundle
 	echo "Deploying to AWS..."
-	@-terraform -chdir=terraform apply -auto-approve -var-file="prod.tfvars"
+	terraform -chdir=terraform apply -auto-approve -var-file="prod.tfvars"
 	echo "Deployment complete"
+
+dev:
+	fastapi dev api/main.py

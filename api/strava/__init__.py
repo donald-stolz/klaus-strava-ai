@@ -6,12 +6,13 @@ including activity management, authentication, and data models.
 """
 
 # Re-export main classes and functions for convenient imports
-from .models import StravaUpdatableActivity
+from .models import StravaUpdatableActivity, StravaWebhookEvent
 from .client import StravaAPIClient
 
 __all__ = [
     "StravaUpdatableActivity",
     "StravaAPIClient",
+    "StravaWebhookEvent",
 ]
 
 __version__ = "0.1.0"

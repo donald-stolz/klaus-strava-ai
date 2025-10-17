@@ -15,5 +15,6 @@ Uses [FastAPI](https://fastapi.tiangolo.com/) and [Google Gemini](https://ai.goo
   - [x] LLM in Google AI Studio
   - [ ] Save chat history or give llm other activity context
   - [x] Response schema; Title, description
+- [ ] Refactor deployment to use Docker and ECR
 
 `fastapi dev api/main.py`

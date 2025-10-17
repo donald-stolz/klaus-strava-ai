@@ -190,3 +190,13 @@ class DetailedActivity(BaseModel):
     prefer_perceived_exertion: Optional[bool] = Field(None, description="Whether the athlete prefers perceived exertion over other metrics")
     segment_leaderboard_opt_out: Optional[bool] = Field(None, description="Whether the athlete has opted out of segment leaderboards")
     leaderboard_opt_out: Optional[bool] = Field(None, description="Whether the athlete has opted out of leaderboards")
+
+class StravaWebhookEvent(BaseModel):
+    """Represents a Strava webhook event."""
+    object_type: str = Field(..., description="The type of the object")
+    object_id: int = Field(..., description="The ID of the object")
+    aspect_type: str = Field(..., description="The type of the aspect")
+    updates: Optional[Dict[str, Any]] = Field(None, description="The updates to the object")
+    owner_id: int = Field(..., description="The ID of the owner of the object")
+    subscription_id: int = Field(..., description="The ID of the subscription")
+    event_time: datetime = Field(..., description="The time of the event")
