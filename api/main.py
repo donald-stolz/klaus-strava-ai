@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, Request
 from strava import StravaAPIClient, StravaUpdatableActivity, StravaWebhookEvent
 from config import Settings
 from gemini import GeminiAPIClient
@@ -19,12 +19,19 @@ def webhook(request: StravaWebhookEvent):
     
     activity_id = request.object_id
     activity = strava_client.get_activity(activity_id)
-    
-    return {"message": "Webhook received"}
+    # TODO: Handle the activity
+    if activity.distance < 1000:
+        strava_client.hide_activity(activity_id)
+        return {"message": "Activity hidden"}
 
-@app.get("/")
-def read_root():
-    return {"message": "Hello World"}
+    post = gemini_client.generate_post(activity)
+    strava_client.update_activity(activity_id, post)
+    return {"message": "Post generated"}
+
+@app.get("/strava/webhook")
+def webhook_get(request: Request):
+    challenge = request.query_params["hub.challenge"]
+    return {"hub.challenge": challenge}
 
 # Testing endpoints
 # @app.get("/")

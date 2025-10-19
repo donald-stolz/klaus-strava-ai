@@ -147,6 +147,7 @@ resource "aws_lambda_function" "lambda-function" {
   role             = aws_iam_role.lambda-iam-role.arn
   handler          = "main.handler"
   source_code_hash = filemd5("${path.module}/../function.zip")
+  timeout          = 300
 
   runtime = "python3.12"
 
@@ -164,51 +165,3 @@ resource "aws_lambda_function" "lambda-function" {
   }
   tags = aws_servicecatalogappregistry_application.klaus-strava-ai.tags
 }
-
-resource "aws_api_gateway_rest_api" "klaus-strava-ai" {
-  name        = "klaus-strava-ai"
-  description = "Klaus Strava AI API"
-}
-
-resource "aws_api_gateway_resource" "proxy" {
-  rest_api_id = aws_api_gateway_rest_api.klaus-strava-ai.id
-  parent_id   = aws_api_gateway_rest_api.klaus-strava-ai.root_resource_id
-  path_part   = "{proxy+}"
-}
-
-resource "aws_api_gateway_method" "proxy" {
-  rest_api_id   = aws_api_gateway_rest_api.klaus-strava-ai.id
-  resource_id   = aws_api_gateway_resource.proxy.id
-  http_method   = "POST"
-  authorization = "NONE"
-}
-
-resource "aws_api_gateway_integration" "lambda" {
-  rest_api_id = aws_api_gateway_rest_api.klaus-strava-ai.id
-  resource_id = aws_api_gateway_method.proxy.resource_id
-  http_method = aws_api_gateway_method.proxy.http_method
-
-  integration_http_method = "POST"
-  type                    = "AWS_PROXY"
-  uri                     = aws_lambda_function.lambda-function.invoke_arn
-}
-resource "aws_api_gateway_deployment" "klaus-strava-ai" {
-  depends_on = [
-    aws_api_gateway_integration.lambda,
-  ]
-
-  rest_api_id = aws_api_gateway_rest_api.klaus-strava-ai.id
-}
-
-resource "aws_lambda_permission" "apigw" {
-  statement_id  = "AllowAPIGatewayInvoke"
-  action        = "lambda:InvokeFunction"
-  function_name = aws_lambda_function.lambda-function.function_name
-  principal     = "apigateway.amazonaws.com"
-
-  source_arn = "${aws_api_gateway_rest_api.klaus-strava-ai.execution_arn}/*/*"
-}
-
-# output "base_url" {
-#   value = aws_api_gateway_deployment.klaus-strava-ai.invoke_url
-# }
